@@ -8,6 +8,7 @@ import re
 from datetime import date
 import itertools
 import json
+import csv
 import xlsxwriter
 import requests
 from requests.auth import HTTPDigestAuth
@@ -204,6 +205,17 @@ def create_report_workbook(outdir, not_in_new, not_in_prod, count_equal,
 
     workbook.close()
 
+def write_csv(outfile, data):
+    '''Write a csv you can use to feed to other programs'''
+    with open(outfile, 'w') as csvfile:
+        writer = csv.writer(csvfile)
+        for row in data:
+            c_url = row[0].split('::')[0]
+            c_name = row[0].split('::')[1]
+            split_row = [c_url, c_name]
+            split_row.extend(row[1:])
+            writer.writerow(split_row)
+
 def main(argv=None):
     parser = argparse.ArgumentParser()
     parser.add_argument('outdir', nargs=1,)
@@ -239,6 +251,10 @@ def main(argv=None):
     pp('NEW MORE {}'.format(len(new_more)))
     create_report_workbook(argv.outdir[0], not_in_new, not_in_prod, count_equal,
                             new_less, new_more)
+    write_csv(os.path.join(argv.outdir[0], '{}-collection_not_in_new.csv'.format(today)),
+            not_in_new)
+    write_csv(os.path.join(argv.outdir[0], '{}-missing_docs_in_new.csv'.format(today)),
+            new_less)
 
 
 if __name__ == "__main__":
