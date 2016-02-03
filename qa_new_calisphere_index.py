@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" calisphere extent stats """
+""" calisphere new production index QA script """
 
 import sys
 import argparse
